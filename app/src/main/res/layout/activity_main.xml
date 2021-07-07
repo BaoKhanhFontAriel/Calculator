@@ -28,11 +28,32 @@
             android:layout_weight="1"
             android:textColor="#E91E63"
             android:textSize="25sp" />
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="103dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/historyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="History" />
+
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Delete" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         android:layout_weight="1">
 
         <Button
@@ -78,7 +99,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="98dp"
+        android:layout_height="40dp"
         android:layout_weight="1">
 
         <Button
@@ -124,7 +145,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="104dp"
+        android:layout_height="40dp"
         android:layout_weight="1">
 
         <Button
@@ -170,7 +191,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="101dp"
+        android:layout_height="40dp"
         android:layout_weight="1">
 
         <Button

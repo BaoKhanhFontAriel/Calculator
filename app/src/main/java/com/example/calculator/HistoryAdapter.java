@@ -40,7 +40,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHold
     public void onBindViewHolder(@NonNull @org.jetbrains.annotations.NotNull HistoryAdapter.HistoryViewHolder holder, int position) {
         HistoryEntry entry = historyList.get(position);
         holder.line1.setText(entry.getHistoryInput());
-        holder.line2.setText(String.valueOf(entry.getHistoryAnswer()));
+        holder.line2.setText("= " + String.valueOf(entry.getHistoryAnswer()));
     }
 
 
@@ -48,8 +48,6 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHold
     public int getItemCount() {
         return historyList.size();
     }
-
-
 
 
     public class HistoryViewHolder extends RecyclerView.ViewHolder{

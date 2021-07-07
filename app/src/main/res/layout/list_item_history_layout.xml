@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/historyInput"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="input"
         android:textAlignment="textEnd"
-        android:layout_height="wrap_content" />
+        android:textColor="#8BC34A" />
 
     <TextView
         android:id="@+id/historyAnswer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="answer"
         android:textAlignment="textEnd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:textColor="#E91E63" />
 
 
 </LinearLayout>
