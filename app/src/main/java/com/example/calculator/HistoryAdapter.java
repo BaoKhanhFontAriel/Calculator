@@ -46,6 +46,9 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHold
 
     @Override
     public int getItemCount() {
+        if (historyList.size() > 20){
+            historyList.remove(0);
+        }
         return historyList.size();
     }
 

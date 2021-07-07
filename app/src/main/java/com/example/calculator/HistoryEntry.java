@@ -21,15 +21,7 @@ public class HistoryEntry {
         return historyAnswer;
     }
 
-//    public List<HistoryEntry> getHistoryList() {
-//        return historyList;
-//    }
-//
-//    public void setHistoryList(HistoryEntry he) {
-//        this.historyList.add(he);
-//    }
-//
-//    List<HistoryEntry> historyList;
+
 }
 
 

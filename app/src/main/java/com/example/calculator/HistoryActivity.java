@@ -1,5 +1,8 @@
 package com.example.calculator;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,19 +18,24 @@ public class HistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_view_history);
 
-        RecyclerView viewHistoryLayout = findViewById(R.id.listViewHistory);
-        //Button clearButton = findViewById(R.id.clearButton);
+        Button clearButton = findViewById(R.id.clearButton);
 
-        ArrayList<HistoryEntry> historyList = new ArrayList<>();
-//        historyList.add(new HistoryEntry( "1+2",3));
-//        historyList.add(new HistoryEntry( "1+2",3));
-        MainActivity mainActivity = new MainActivity();
-        historyList = mainActivity.getHistoryList();
-        HistoryAdapter historyAdapter = new HistoryAdapter(historyList);
+        RecyclerView viewHistoryLayout = findViewById(R.id.listViewHistory);
+
+
+
+        HistoryAdapter historyAdapter = new HistoryAdapter(MainActivity.historyEntryList);
 
         viewHistoryLayout.setAdapter(historyAdapter);
         viewHistoryLayout.setLayoutManager(new LinearLayoutManager(this));
 
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.historyEntryList.clear();
+                historyAdapter.notifyDataSetChanged();
+            }
+        });
 
     }
 }

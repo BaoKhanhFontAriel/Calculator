@@ -15,20 +15,15 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     double result;
     boolean isResultTrue;
-    String text = " ", numberText = "";
+    String text = "", numberText = "";
     List<String> calculationList = new ArrayList<>();
+    public static ArrayList<HistoryEntry> historyEntryList = new ArrayList<>();
 
-    ArrayList<HistoryEntry> historyEntryList = new ArrayList<>();
-
-    public ArrayList<HistoryEntry> getHistoryList() {
-        return historyEntryList;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
 
         Button button0 = findViewById(R.id.button0);
@@ -55,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         button0.setOnClickListener(v -> {
-            if (isResultTrue == true){
+            if (isResultTrue == true) {
                 isResultTrue = false;
                 text = "";
                 calculationList.clear();
@@ -66,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         button1.setOnClickListener(v -> {
-            if (isResultTrue == true){
+            if (isResultTrue == true) {
                 isResultTrue = false;
 
                 text = "";
@@ -77,11 +72,11 @@ public class MainActivity extends AppCompatActivity {
             numberText = numberText + "1";
 
         });
-        button2.setOnClickListener(new View.OnClickListener(){
+        button2.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (isResultTrue == true){
+                if (isResultTrue == true) {
                     isResultTrue = false;
 
                     text = "";
@@ -93,27 +88,27 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        button3.setOnClickListener(new View.OnClickListener(){
+        button3.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (isResultTrue){
+                if (isResultTrue) {
                     isResultTrue = false;
 
                     text = "";
                     calculationList.clear();
                 }
                 text = text + "3";
-                textView1.setText(text );
+                textView1.setText(text);
                 numberText = numberText + "3";
 
             }
         });
-        button4.setOnClickListener(new View.OnClickListener(){
+        button4.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (isResultTrue){
+                if (isResultTrue) {
                     isResultTrue = false;
 
                     text = "";
@@ -125,11 +120,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        button5.setOnClickListener(new View.OnClickListener(){
+        button5.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (isResultTrue == true){
+                if (isResultTrue == true) {
                     isResultTrue = false;
 
                     text = "";
@@ -141,11 +136,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        button6.setOnClickListener(new View.OnClickListener(){
+        button6.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (isResultTrue == true){
+                if (isResultTrue == true) {
                     isResultTrue = false;
 
                     text = "";
@@ -157,11 +152,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        button7.setOnClickListener(new View.OnClickListener(){
+        button7.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (isResultTrue == true){
+                if (isResultTrue == true) {
                     isResultTrue = false;
 
                     text = "";
@@ -173,11 +168,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        button8.setOnClickListener(new View.OnClickListener(){
+        button8.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (isResultTrue == true){
+                if (isResultTrue == true) {
                     isResultTrue = false;
 
                     text = "";
@@ -189,11 +184,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        button9.setOnClickListener(new View.OnClickListener(){
+        button9.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (isResultTrue == true){
+                if (isResultTrue == true) {
                     isResultTrue = false;
 
                     text = "";
@@ -205,17 +200,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        buttonDot.setOnClickListener(new View.OnClickListener(){
+        buttonDot.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 text = text + ".";
                 textView1.setText(text);
                 numberText = numberText + ".";
-
             }
         });
-        buttonDiv.setOnClickListener(new View.OnClickListener(){
+        buttonDiv.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -226,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
                 numberText = "";
             }
         });
-        buttonAdd.setOnClickListener(new View.OnClickListener(){
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -237,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                 numberText = "";
             }
         });
-        buttonMinus.setOnClickListener(new View.OnClickListener(){
+        buttonMinus.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -248,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
                 numberText = "";
             }
         });
-        buttonMultiply.setOnClickListener(new View.OnClickListener(){
+        buttonMultiply.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -261,41 +255,42 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         buttonEqual.setOnClickListener(v -> {
-            calculationList.add(numberText);
+            if (calculationList.size() == 2 & numberText == "") {
+                textView2.setText("Error");
+            } else {
+                calculationList.add(numberText);
 
-            if (calculationList.contains("/")){
-                result = Double.parseDouble(calculationList.get(0)) / Double.parseDouble(calculationList.get(2));
-            }
-            if (calculationList.contains("x")){
-                result = Double.parseDouble(calculationList.get(0)) * Double.parseDouble(calculationList.get(2));
-            }
-            if (calculationList.contains("+")){
-                result = Double.parseDouble(calculationList.get(0)) + Double.parseDouble(calculationList.get(2));
-            }
-            if (calculationList.contains("-")){
-                result = Double.parseDouble(calculationList.get(0)) - Double.parseDouble(calculationList.get(2));
-            }
+                if (calculationList.size() == 3) {
 
-            String textConvert = "";
-            for (String s: calculationList){
-                textConvert += s;
+                    if (calculationList.contains("/")) {
+                        result = Double.parseDouble(calculationList.get(0)) / Double.parseDouble(calculationList.get(2));
+                    }
+                    if (calculationList.contains("x")) {
+                        result = Double.parseDouble(calculationList.get(0)) * Double.parseDouble(calculationList.get(2));
+                    }
+                    if (calculationList.contains("+")) {
+                        result = Double.parseDouble(calculationList.get(0)) + Double.parseDouble(calculationList.get(2));
+                    }
+                    if (calculationList.contains("-")) {
+                        result = Double.parseDouble(calculationList.get(0)) - Double.parseDouble(calculationList.get(2));
+                    }
+
+                    String textConvert = "";
+                    for (String s : calculationList) {
+                        textConvert += s;
+                    }
+
+                    historyEntryList.add(new HistoryEntry(textConvert, result));
+
+                    textView2.setText(String.valueOf(result) );
+
+                    isResultTrue = true;
+                    numberText = "";
+                }
+                if (calculationList.size() == 1) {
+                    textView2.setText("Error!");
+                }
             }
-
-            HistoryEntry historyEntry;
-            historyEntry = new HistoryEntry(textConvert, result);
-//            historyEntryList.add( new HistoryEntry("2+3", 5));
-//            historyEntryList.add( new HistoryEntry("2+3", 5));
-            historyEntryList.add(new HistoryEntry(textConvert, result));
-
-//            textView2.setText(String.valueOf(result));
-            String temp = "";
-            for (HistoryEntry he: historyEntryList){
-                temp +="[" + String.valueOf(he.getHistoryInput()) + "," + String.valueOf(he.getHistoryAnswer() + "]");
-            textView2.setText(temp);
-            }
-            isResultTrue = true;
-            numberText = "";
-
         });
 
         buttonHistory.setOnClickListener(new View.OnClickListener() {
@@ -308,10 +303,40 @@ public class MainActivity extends AppCompatActivity {
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!isResultTrue) {
+                    if (!text.isEmpty()) {
+                        text = text.substring(0, text.length() - 1);
+                        textView1.setText(text);
+                    } else {
+                        textView1.setText("");
+                    }
+                } else {
+                    textView1.setText("");
+                    textView2.setText("");
+                    isResultTrue = false;
+                    text = "";
+                    calculationList.clear();
+                    numberText = "";
+                }
 
+                calculationList.clear();
+                numberText = "";
+
+                if (!text.isEmpty()) {
+                    for (int i = 0; i < text.length(); i++){
+                        if (Character.isDigit(text.charAt(i))){
+                            numberText += text.charAt(i);
+                        }
+                        else {
+                            calculationList.add(numberText);
+                            calculationList.add(String.valueOf(text.charAt(i)));
+                            numberText = "";
+                        }
+                    }
+                }
             }
         });
 
-}
+    }
 
 }
