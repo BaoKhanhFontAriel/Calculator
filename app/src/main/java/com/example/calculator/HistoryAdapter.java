@@ -11,12 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
 
 
-    private List<HistoryEntry> historyList;
+    private List<HistoryEntry> historyList =  new ArrayList<>();
 
     public HistoryAdapter(List<HistoryEntry> historyList) {
         this.historyList = historyList;

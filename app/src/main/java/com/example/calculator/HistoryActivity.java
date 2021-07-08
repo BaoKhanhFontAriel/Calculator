@@ -24,7 +24,7 @@ public class HistoryActivity extends AppCompatActivity {
 
 
 
-        HistoryAdapter historyAdapter = new HistoryAdapter(MainActivity.historyEntryList);
+        HistoryAdapter historyAdapter = new HistoryAdapter(History.getInstance().getHistoryEntryList());
 
         viewHistoryLayout.setAdapter(historyAdapter);
         viewHistoryLayout.setLayoutManager(new LinearLayoutManager(this));
@@ -32,7 +32,7 @@ public class HistoryActivity extends AppCompatActivity {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.historyEntryList.clear();
+                History.getInstance().clear();
                 historyAdapter.notifyDataSetChanged();
             }
         });

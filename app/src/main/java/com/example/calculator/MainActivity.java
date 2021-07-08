@@ -17,8 +17,21 @@ public class MainActivity extends AppCompatActivity {
     boolean isResultTrue;
     String text = "", numberText = "";
     List<String> calculationList = new ArrayList<>();
-    public static ArrayList<HistoryEntry> historyEntryList = new ArrayList<>();
 
+    View.OnClickListener numberButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (isResultTrue) {
+                isResultTrue = false;
+                text = "";
+                calculationList.clear();
+            }
+
+            text = text + ((Button)v).getText();
+            ((Button) v).setText(text);
+            numberText = numberText + ((Button)v).getText();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,16 +39,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        Button button0 = findViewById(R.id.button0);
-        Button button1 = findViewById(R.id.button1);
-        Button button2 = findViewById(R.id.button2);
-        Button button3 = findViewById(R.id.button3);
-        Button button4 = findViewById(R.id.button4);
-        Button button5 = findViewById(R.id.button5);
-        Button button6 = findViewById(R.id.button6);
-        Button button7 = findViewById(R.id.button7);
-        Button button8 = findViewById(R.id.button8);
-        Button button9 = findViewById(R.id.button9);
+
+        findViewById(R.id.button0).setOnClickListener(numberButtonListener);
+        findViewById(R.id.button1).setOnClickListener(numberButtonListener);
+        findViewById(R.id.button2).setOnClickListener(numberButtonListener);
+        findViewById(R.id.button3).setOnClickListener(numberButtonListener);
+        findViewById(R.id.button4).setOnClickListener(numberButtonListener);
+        findViewById(R.id.button5).setOnClickListener(numberButtonListener);
+        findViewById(R.id.button6).setOnClickListener(numberButtonListener);
+        findViewById(R.id.button7).setOnClickListener(numberButtonListener);
+        findViewById(R.id.button8).setOnClickListener(numberButtonListener);
+        findViewById(R.id.button9).setOnClickListener(numberButtonListener);
+
         Button buttonAdd = findViewById(R.id.buttonAdd);
         Button buttonDiv = findViewById(R.id.buttonDiv);
         Button buttonDot = findViewById(R.id.buttonDot);
@@ -49,157 +64,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textView2 = findViewById(R.id.textView2);
 
 
-        button0.setOnClickListener(v -> {
-            if (isResultTrue == true) {
-                isResultTrue = false;
-                text = "";
-                calculationList.clear();
-            }
-            text = text + "0";
-            textView1.setText(text);
-            numberText = numberText + "0";
-        });
 
-        button1.setOnClickListener(v -> {
-            if (isResultTrue == true) {
-                isResultTrue = false;
-
-                text = "";
-                calculationList.clear();
-            }
-            text = text + "1";
-            textView1.setText(text);
-            numberText = numberText + "1";
-
-        });
-        button2.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isResultTrue == true) {
-                    isResultTrue = false;
-
-                    text = "";
-                    calculationList.clear();
-                }
-                text = text + "2";
-                textView1.setText(text);
-                numberText = numberText + "2";
-
-            }
-        });
-        button3.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isResultTrue) {
-                    isResultTrue = false;
-
-                    text = "";
-                    calculationList.clear();
-                }
-                text = text + "3";
-                textView1.setText(text);
-                numberText = numberText + "3";
-
-            }
-        });
-        button4.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isResultTrue) {
-                    isResultTrue = false;
-
-                    text = "";
-                    calculationList.clear();
-                }
-                text = text + "4";
-                textView1.setText(text);
-                numberText = numberText + "4";
-
-            }
-        });
-        button5.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isResultTrue == true) {
-                    isResultTrue = false;
-
-                    text = "";
-                    calculationList.clear();
-                }
-                text = text + "5";
-                textView1.setText(text);
-                numberText = numberText + "5";
-
-            }
-        });
-        button6.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isResultTrue == true) {
-                    isResultTrue = false;
-
-                    text = "";
-                    calculationList.clear();
-                }
-                text = text + "6";
-                textView1.setText(text);
-                numberText = numberText + "6";
-
-            }
-        });
-        button7.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isResultTrue == true) {
-                    isResultTrue = false;
-
-                    text = "";
-                    calculationList.clear();
-                }
-                text = text + "7";
-                textView1.setText(text);
-                numberText = numberText + "7";
-
-            }
-        });
-        button8.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isResultTrue == true) {
-                    isResultTrue = false;
-
-                    text = "";
-                    calculationList.clear();
-                }
-                text = text + "8";
-                textView1.setText(text);
-                numberText = numberText + "8";
-
-            }
-        });
-        button9.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isResultTrue == true) {
-                    isResultTrue = false;
-
-                    text = "";
-                    calculationList.clear();
-                }
-                text = text + "9";
-                textView1.setText(text);
-                numberText = numberText + "9";
-
-            }
-        });
         buttonDot.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -280,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                         textConvert += s;
                     }
 
-                    historyEntryList.add(new HistoryEntry(textConvert, result));
+                    History.getInstance().addEntry(new HistoryEntry(textConvert, result));
 
                     textView2.setText(String.valueOf(result) );
 
