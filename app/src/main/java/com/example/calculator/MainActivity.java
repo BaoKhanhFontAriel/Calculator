@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,23 +14,61 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     double result;
     boolean isResultTrue;
-    String text = "", numberText = "";
+    String inputText = "", numberText = "";
     List<String> calculationList = new ArrayList<>();
+    TextView inputTextView;
+    TextView answerTextView;
+
+
 
     View.OnClickListener numberButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (isResultTrue) {
                 isResultTrue = false;
-                text = "";
+                inputText = "";
                 calculationList.clear();
             }
-
-            text = text + ((Button)v).getText();
-            ((Button) v).setText(text);
+            Log.d(TAG, "current text: " + inputText);
+            inputText = inputText + ((Button)v).getText();
+            inputTextView.setText(inputText);
             numberText = numberText + ((Button)v).getText();
+        }
+    };
+
+    char[] actionList = {'+', '-', 'x', '/'};
+
+
+//    void parseCalculation(String inputText) {
+//        //thuc hien toan bo cac phep nhan
+//        String result1;
+//
+//        parseCalculation(result1);
+//
+//        double asdj = calculate(String input)
+//    }
+
+
+    View.OnClickListener onActionClicked = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+
+
+
+            char c = inputText.charAt(inputText.length()-1);
+             if (c > '9' || c < '0') {
+                 Log.d(TAG, "cannot add input: not a number");
+                 return;
+             }
+
+            //clone old behavior
+            inputText += ((TextView)v).getText();
+            inputTextView.setText(inputText);
+            numberText += ((TextView)v).getText();
         }
     };
 
@@ -60,17 +99,22 @@ public class MainActivity extends AppCompatActivity {
         Button buttonHistory = findViewById(R.id.historyButton);
         Button buttonDelete = findViewById(R.id.deleteButton);
 
-        TextView textView1 = findViewById(R.id.textView1);
-        TextView textView2 = findViewById(R.id.textView2);
+        inputTextView = findViewById(R.id.textView1);
+        answerTextView = findViewById(R.id.textView2);
 
+        if (!History.getInstance().getHistoryEntryList().isEmpty()){
+            inputText += getIntent().getStringExtra("historyAnswer");
+            inputTextView.setText(inputText);
+            numberText += inputText;
 
+        }
 
         buttonDot.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                text = text + ".";
-                textView1.setText(text);
+                inputText = inputText + ".";
+                inputTextView.setText(inputText);
                 numberText = numberText + ".";
             }
         });
@@ -78,10 +122,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                text = text + "/";
+                inputText = inputText + "/";
                 calculationList.add(numberText);
                 calculationList.add("/");
-                textView1.setText(text);
+                inputTextView.setText(inputText);
                 numberText = "";
             }
         });
@@ -89,10 +133,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                text = text + "+";
+                inputText = inputText + "+";
                 calculationList.add(numberText);
                 calculationList.add("+");
-                textView1.setText(text);
+                inputTextView.setText(inputText);
                 numberText = "";
             }
         });
@@ -100,10 +144,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                text = text + "-";
+                inputText = inputText + "-";
                 calculationList.add(numberText);
                 calculationList.add("-");
-                textView1.setText(text);
+                inputTextView.setText(inputText);
                 numberText = "";
             }
         });
@@ -111,17 +155,17 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                text = text + "x";
+                inputText = inputText + "x";
                 calculationList.add(numberText);
                 calculationList.add("x");
-                textView1.setText(text);
+                inputTextView.setText(inputText);
                 numberText = "";
 
             }
         });
         buttonEqual.setOnClickListener(v -> {
             if (calculationList.size() == 2 & numberText == "") {
-                textView2.setText("Error");
+                answerTextView.setText("Error");
             } else {
                 calculationList.add(numberText);
 
@@ -147,13 +191,13 @@ public class MainActivity extends AppCompatActivity {
 
                     History.getInstance().addEntry(new HistoryEntry(textConvert, result));
 
-                    textView2.setText(String.valueOf(result) );
+                    answerTextView.setText(String.valueOf(result) );
 
                     isResultTrue = true;
                     numberText = "";
                 }
                 if (calculationList.size() == 1) {
-                    textView2.setText("Error!");
+                    answerTextView.setText("Error!");
                 }
             }
         });
@@ -169,17 +213,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!isResultTrue) {
-                    if (!text.isEmpty()) {
-                        text = text.substring(0, text.length() - 1);
-                        textView1.setText(text);
+                    if (!inputText.isEmpty()) {
+                        inputText = inputText.substring(0, inputText.length() - 1);
+                        inputTextView.setText(inputText);
                     } else {
-                        textView1.setText("");
+                        inputTextView.setText("");
                     }
                 } else {
-                    textView1.setText("");
-                    textView2.setText("");
+                    inputTextView.setText("");
+                    answerTextView.setText("");
                     isResultTrue = false;
-                    text = "";
+                    inputText = "";
                     calculationList.clear();
                     numberText = "";
                 }
@@ -187,14 +231,14 @@ public class MainActivity extends AppCompatActivity {
                 calculationList.clear();
                 numberText = "";
 
-                if (!text.isEmpty()) {
-                    for (int i = 0; i < text.length(); i++){
-                        if (Character.isDigit(text.charAt(i))){
-                            numberText += text.charAt(i);
+                if (!inputText.isEmpty()) {
+                    for (int i = 0; i < inputText.length(); i++){
+                        if (Character.isDigit(inputText.charAt(i))){
+                            numberText += inputText.charAt(i);
                         }
                         else {
                             calculationList.add(numberText);
-                            calculationList.add(String.valueOf(text.charAt(i)));
+                            calculationList.add(String.valueOf(inputText.charAt(i)));
                             numberText = "";
                         }
                     }

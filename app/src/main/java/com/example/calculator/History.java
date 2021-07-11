@@ -17,9 +17,6 @@ public class History {
         return instance;
     }
     /////////////////////////////////
-    private History() {
-        historyEntryList.add(new HistoryEntry("first", 1));
-    }
    ///////////////////////////////////////////////////////////////
 
     public void addEntry(HistoryEntry entry) {

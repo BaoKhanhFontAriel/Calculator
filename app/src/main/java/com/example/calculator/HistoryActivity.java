@@ -1,5 +1,9 @@
 package com.example.calculator;
+import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
+    RecyclerView recyclerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -20,14 +25,12 @@ public class HistoryActivity extends AppCompatActivity {
 
         Button clearButton = findViewById(R.id.clearButton);
 
-        RecyclerView viewHistoryLayout = findViewById(R.id.listViewHistory);
+        recyclerView = findViewById(R.id.listViewHistory);
 
+        HistoryAdapter historyAdapter = new HistoryAdapter(History.getInstance().getHistoryEntryList(), callback);
 
-
-        HistoryAdapter historyAdapter = new HistoryAdapter(History.getInstance().getHistoryEntryList());
-
-        viewHistoryLayout.setAdapter(historyAdapter);
-        viewHistoryLayout.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(historyAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,4 +41,16 @@ public class HistoryActivity extends AppCompatActivity {
         });
 
     }
+
+    HistoryAdapter.IEntryClicked callback = new HistoryAdapter.IEntryClicked() {
+        @Override
+        public void onItemClicked(int position) {
+            HistoryEntry entry = ((HistoryAdapter)recyclerView.getAdapter()).getEntryInfo(position);
+            Intent intent =  new Intent (getApplicationContext(), MainActivity.class);
+            intent.putExtra("historyAnswer", String.valueOf(entry.getHistoryAnswer()));
+            Log.d("TAG", "historyActivilty oncItemClicked is clicked" + entry.getHistoryAnswer());
+            startActivity(intent);
+        }
+    };
+
 }

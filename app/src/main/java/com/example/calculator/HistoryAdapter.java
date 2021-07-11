@@ -19,10 +19,14 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHold
 
     private List<HistoryEntry> historyList =  new ArrayList<>();
 
-    public HistoryAdapter(List<HistoryEntry> historyList) {
+    public HistoryAdapter(List<HistoryEntry> historyList, IEntryClicked callback) {
         this.historyList = historyList;
+        this.callback = callback;
     }
 
+    public HistoryEntry getEntryInfo(int pos){
+        return historyList.get(pos);
+    }
 
     @NonNull
     @Override
@@ -54,15 +58,30 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHold
     }
 
 
-    public class HistoryViewHolder extends RecyclerView.ViewHolder{
+    public class HistoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView line1;
         public TextView line2;
+
+
         public HistoryViewHolder(@NonNull @org.jetbrains.annotations.NotNull View itemView) {
             super(itemView);
             line1 = itemView.findViewById(R.id.historyInput);
             line2 = itemView.findViewById(R.id.historyAnswer);
+
+            itemView.setOnClickListener(this);
+        }
+
+
+        @Override
+        public void onClick(View v) {
+            callback.onItemClicked(getAdapterPosition());
         }
     }
 
+    private IEntryClicked callback;
 
+    public interface IEntryClicked {
+        void onItemClicked(int position);
+
+    }
 }
