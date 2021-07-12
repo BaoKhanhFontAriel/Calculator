@@ -48,7 +48,6 @@ public class HistoryActivity extends AppCompatActivity {
             HistoryEntry entry = ((HistoryAdapter)recyclerView.getAdapter()).getEntryInfo(position);
             Intent intent =  new Intent (getApplicationContext(), MainActivity.class);
             intent.putExtra("historyAnswer", String.valueOf(entry.getHistoryAnswer()));
-            Log.d("TAG", "historyActivilty oncItemClicked is clicked" + entry.getHistoryAnswer());
             startActivity(intent);
         }
     };

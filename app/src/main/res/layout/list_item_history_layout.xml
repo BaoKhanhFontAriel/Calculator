@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
     <TextView
         android:id="@+id/historyInput"
@@ -12,7 +12,8 @@
         android:text="input"
         android:textSize="25sp"
         android:textAlignment="textEnd"
-        android:textColor="#8BC34A" />
+        android:textColor="#8BC34A"
+        />
 
     <TextView
         android:id="@+id/historyAnswer"

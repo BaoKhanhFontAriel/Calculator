@@ -8,8 +8,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listViewHistory"
-        android:layout_width="match_parent"
-        android:layout_height="500dp">
+        android:layout_width="300dp"
+        android:layout_height="500dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:background="?android:selectableItemBackground">
 
     </androidx.recyclerview.widget.RecyclerView>
 

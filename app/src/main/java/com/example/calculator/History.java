@@ -25,8 +25,6 @@ public class History {
     }
 
     public ArrayList<HistoryEntry> getHistoryEntryList() {
-
-
         return historyEntryList;
     }
 

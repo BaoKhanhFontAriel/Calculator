@@ -19,7 +19,8 @@
             android:layout_height="145dp"
             android:layout_weight="1"
             android:textColor="#009688"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            android:gravity="end|center_vertical"/>
 
         <TextView
             android:id="@+id/textView2"
@@ -27,7 +28,8 @@
             android:layout_height="125dp"
             android:layout_weight="1"
             android:textColor="#E91E63"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            android:gravity="end|center_vertical"/>
 
     </LinearLayout>
 
