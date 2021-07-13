@@ -117,9 +117,9 @@ public class MainActivity extends AppCompatActivity {
         editor = sharedPreferences.edit();
 
         // get the saved history
-        int numberOfEntry = Integer.parseInt(sharedPreferences.getString("NUMBER_OF_ENTRY", "0"));
+        int numberOfEntry = Integer.parseInt(sharedPreferences.getString("NUMBER_OF_INDEX", "0"));
 
-        for (int i = 1; i <= numberOfEntry; i++) {
+        for (int i = 0; i <= numberOfEntry; i++) {
             String savedInput = sharedPreferences.getString("INPUT" + String.valueOf(i), "");
             double savedAnswer = Double.parseDouble(sharedPreferences.getString("ANSWER" + String.valueOf(i), "0"));
             History.getInstance().addEntry(new HistoryEntry(savedInput, savedAnswer));
@@ -151,11 +151,19 @@ public class MainActivity extends AppCompatActivity {
             History.getInstance().addEntry(new HistoryEntry(inputText, result));
             isExpressionCalculated = true;
 
-            String entryIndex = String.valueOf(History.getInstance().getHistoryEntryList().size());
-            editor.putString("NUMBER_OF_ENTRY", entryIndex);
-            editor.putString("INPUT" + entryIndex, inputText);
-            editor.putString("ANSWER" + entryIndex, String.valueOf(result));
-            editor.commit();
+            int entryIndex = History.getInstance().getHistoryEntryList().size() - 1;
+            editor.putString("NUMBER_OF_INDEX", String.valueOf(entryIndex));
+
+            for (int i = 0; i <= entryIndex; i++){
+                String inputKey = History.getInstance().getHistoryEntryList().get(i).getHistoryInput();
+                String answerKey = String.valueOf(History.getInstance().getHistoryEntryList().get(i).getHistoryAnswer());
+
+                editor.putString("INPUT" + String.valueOf(i), inputKey);
+                editor.putString("ANSWER" + String.valueOf(i), answerKey);
+                editor.commit();
+            }
+
+
         });
 
         buttonHistory.setOnClickListener(new View.OnClickListener() {
