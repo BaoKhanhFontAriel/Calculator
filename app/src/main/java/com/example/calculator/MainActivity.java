@@ -23,7 +23,10 @@ public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager = getSupportFragmentManager();
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    boolean isHistoryDisabled;
+    Button buttonHistory;
+    boolean isExpressionHasOperator = false;
+    ArrayList<String> calList = new ArrayList<>();
+    String numberText  = "";
 
 
     View.OnClickListener numberButtonListener = new View.OnClickListener() {
@@ -46,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            Log.d(TAG, "onClick: " + ((Button) v).getText());
-
             if (!inputText.isEmpty()) {
                 char c = inputText.charAt(inputText.length() - 1);
                 if (c > '9' || c < '0') {
@@ -56,21 +57,28 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            // begin new number
+
+            // first number ended after press operator, new number does not have dot
             isDotAlreadyInNumber = false;
 
+            // stop add more operator if the expression has 2 numbers
+            if (isExpressionHasOperator){
+                return;
+            }
+
+            // Operator button is pressed after equal button
             // Start new expression with result of old expression
             if (isExpressionCalculated) {
                 inputText = String.valueOf(result);
                 inputTextView.setText(inputText);
                 isExpressionCalculated = false;
+                isExpressionHasOperator = true;
             }
 
-            // Ensure x, / is not entered at beginning
+            // Ensure x, / is not entered at beginning of expression
             CharSequence c = ((Button) v).getText();
             if (inputText.isEmpty()) {
                 if ("+".contentEquals(c) || "-".contentEquals(c)) {
-                    Log.d(TAG, "onClick: worked");
                     inputText += ((TextView) v).getText();
                     inputTextView.setText(inputText);
                 }
@@ -78,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 inputText += ((TextView) v).getText();
                 inputTextView.setText(inputText);
+                isExpressionHasOperator = true;
             }
         }
     };
@@ -107,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button buttonDot = findViewById(R.id.buttonDot);
         Button buttonEqual = findViewById(R.id.buttonEqual);
-        Button buttonHistory = findViewById(R.id.historyButton);
+        buttonHistory = findViewById(R.id.historyButton);
         Button buttonDelete = findViewById(R.id.deleteButton);
 
         inputTextView = findViewById(R.id.textView1);
@@ -117,9 +126,9 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("mySharedPref", MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        // get the saved history
-        setSavedHistory();
-        ////////////////////
+        getHistoryButtonState();
+        getSavedHistory();
+
         buttonDot.setOnClickListener(v -> {
             setDotButton();
         });
@@ -129,9 +138,6 @@ public class MainActivity extends AppCompatActivity {
             buttonHistory.setEnabled(true);
         });
 
-
-        buttonHistory.setEnabled(false);
-
         buttonDelete.setOnClickListener(v -> {
             setDeleteButton();
         });
@@ -139,7 +145,58 @@ public class MainActivity extends AppCompatActivity {
         buttonHistory.setOnClickListener(v -> setHistoryButton());
     }
 
-    public void setSavedHistory() {
+    public double getResult(String s){
+        String numberText ="";
+        for (int i = 0; i < s.length(); i++){
+            if (i == 0 && (s.charAt(i) == '+' || s.charAt(i) == '-'  || s.charAt(i) == '/'  || s.charAt(i) == 'x' )){
+                numberText += s.charAt(i);
+            }
+            else if ((s.charAt(i) <= '9' && s.charAt(i) >= '0') || s.charAt(i) == '.'){
+                numberText += s.charAt(i);
+            }
+            else {
+                calList.add(numberText);
+                calList.add(String.valueOf(s.charAt(i)));
+                numberText = "";
+            }
+
+        }
+        calList.add(numberText);
+        Log.d(TAG, "getResult: callist" + calList);
+        double answer = calculate(calList.get(0), calList.get(2), calList.get(1));
+        calList.clear();
+        return answer;
+    }
+
+    public double calculate(String s1, String s2, String operate){
+        double i1 = Double.parseDouble(s1);
+        double i2 = Double.parseDouble(s2);
+        switch (operate){
+            case "+":
+                return i1 + i2;
+            case "-":
+                return i1 - i2;
+            case "/":
+                return i1 / i2;
+            case "x":
+                return i1 * i2;
+        }
+
+        Log.d(TAG, "calculate: is cleared");
+        return 0;
+    }
+
+    public void getHistoryButtonState() {
+        buttonHistory.setEnabled(sharedPreferences.getBoolean("ENABLE_STATE", true));
+        Log.d(TAG, "getHistoryButtonState: " + sharedPreferences.getBoolean("ENABLE_STATE", true));
+    }
+
+    public void setHistoryButtonState(boolean value) {
+        editor.putBoolean("ENABLE_STATE", value);
+        editor.commit();
+    }
+
+    public void getSavedHistory() {
         int numberOfEntry = Integer.parseInt(sharedPreferences.getString("NUMBER_OF_INDEX", "0"));
 
         for (int i = 1; i <= numberOfEntry; i++) {
@@ -166,16 +223,23 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "cannot add input: not a number");
             return;
         }
-        inputText = inputText.replace('x', '*');
 
-        result = Calculate.evaluate(inputText);
+
+        result = getResult(inputText);
+        Log.d(TAG, "setEqualButton: result" + result);
         answerTextView.setText(String.valueOf(result));
 
-        inputText = inputText.replace('*', 'x');
         History.getInstance().addEntry(new HistoryEntry(inputText, result));
         isExpressionCalculated = true;
-        isHistoryDisabled = false;
+        isExpressionHasOperator = false;
 
+        setSavedHistory();
+
+        setHistoryButtonState(true);
+
+    }
+
+    public void setSavedHistory() {
         int entryNumber = History.getInstance().getHistoryEntryList().size();
         editor.putString("NUMBER_OF_INDEX", String.valueOf(entryNumber));
 
@@ -194,16 +258,18 @@ public class MainActivity extends AppCompatActivity {
         historyDialog.show(fragmentManager, "history");
     }
 
-    public void disableHistoryButton(View v) {
-        ((Button) v).setEnabled(false);
-    }
 
     public void setDeleteButton() {
         if (!isExpressionCalculated) {
             if (!inputText.isEmpty()) {
                 // delete the dot
-                if (inputText.charAt(inputText.length() - 1) == '.') {
+                char lastChar = inputText.charAt(inputText.length() - 1);
+                if (lastChar == '.') {
                     isDotAlreadyInNumber = false;
+                }
+                // delete the operator
+                if (lastChar == '+' || lastChar == '-' || lastChar == '/' || lastChar == 'x'){
+                    isExpressionHasOperator = false;
                 }
                 inputText = inputText.substring(0, inputText.length() - 1);
                 inputTextView.setText(inputText);
@@ -212,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
             inputTextView.setText("");
             answerTextView.setText("");
             isExpressionCalculated = false;
+            isExpressionHasOperator = false;
             inputText = "";
         }
     }
@@ -220,15 +287,39 @@ public class MainActivity extends AppCompatActivity {
     HistoryDialog.IHistoryEntryClicked answerCallBack = new HistoryDialog.IHistoryEntryClicked() {
         @Override
         public void OnItemClicked(int position) {
-            char c = inputText.charAt(inputText.length() - 1);
-            if (c == 'x' || c == '/' || c == '+' || c == '-'){
-                inputText += String
-                        .valueOf(History.getInstance().getHistoryEntryList().get(position).getHistoryAnswer());
-            } else {
+
+            if (inputText.isEmpty()){
                 inputText = String
                         .valueOf(History.getInstance().getHistoryEntryList().get(position).getHistoryAnswer());
+                isExpressionHasOperator = false;
             }
+            else {
+                // answer in history is clicked
+                // but the input text ended with an operator
+                char c = inputText.charAt(inputText.length() - 1);
+                if (c == 'x' || c == '/' || c == '+' || c == '-') {
 
+                    // the answer is negative
+                    // delete the operator
+                    // now operator is minus
+                    if (History.getInstance().getHistoryEntryList().get(position).getHistoryAnswer() < 0) {
+                        inputText = inputText.substring(0, inputText.length() - 1);
+                        inputText += String
+                                .valueOf(History.getInstance().getHistoryEntryList().get(position).getHistoryAnswer());
+                    } else inputText += String
+                            .valueOf(History.getInstance().getHistoryEntryList().get(position).getHistoryAnswer());
+
+                    isExpressionHasOperator = true;
+
+                }
+                // but the input text did not end with an operator
+                // start new expression with the answer
+                else {
+                    inputText = String
+                            .valueOf(History.getInstance().getHistoryEntryList().get(position).getHistoryAnswer());
+                    isExpressionHasOperator = false;
+                }
+            }
             inputTextView.setText(inputText);
             isExpressionCalculated = false;
 
@@ -242,7 +333,8 @@ public class MainActivity extends AppCompatActivity {
             if (isPressed) {
                 editor.clear();
                 editor.commit();
-                isHistoryDisabled = true;
+                buttonHistory.setEnabled(false);
+                setHistoryButtonState(false);
             }
         }
     };
