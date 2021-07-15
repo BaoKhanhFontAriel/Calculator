@@ -45,6 +45,7 @@ public class HistoryDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 History.getInstance().clear();
+                getDialog().dismiss();
                 clearCallback.OnItemClicked(true);
                 historyAdapter.notifyDataSetChanged();
             }

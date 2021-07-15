@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager = getSupportFragmentManager();
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    boolean isHistoryDisabled;
 
 
     View.OnClickListener numberButtonListener = new View.OnClickListener() {
@@ -117,6 +118,28 @@ public class MainActivity extends AppCompatActivity {
         editor = sharedPreferences.edit();
 
         // get the saved history
+        setSavedHistory();
+        ////////////////////
+        buttonDot.setOnClickListener(v -> {
+            setDotButton();
+        });
+
+        buttonEqual.setOnClickListener(v -> {
+            setEqualButton();
+            buttonHistory.setEnabled(true);
+        });
+
+
+        buttonHistory.setEnabled(false);
+
+        buttonDelete.setOnClickListener(v -> {
+            setDeleteButton();
+        });
+
+        buttonHistory.setOnClickListener(v -> setHistoryButton());
+    }
+
+    public void setSavedHistory() {
         int numberOfEntry = Integer.parseInt(sharedPreferences.getString("NUMBER_OF_INDEX", "0"));
 
         for (int i = 1; i <= numberOfEntry; i++) {
@@ -124,90 +147,91 @@ public class MainActivity extends AppCompatActivity {
             double savedAnswer = Double.parseDouble(sharedPreferences.getString("ANSWER" + String.valueOf(i), "0"));
             History.getInstance().addEntry(new HistoryEntry(savedInput, savedAnswer));
         }
-        ////////////////////
-        buttonDot.setOnClickListener(v -> {
-            Log.d(TAG, "button Dot is clicked, isDotAlreadyInNumber is: " + isDotAlreadyInNumber);
-            if (!isDotAlreadyInNumber) {
-                inputText = inputText + ".";
-                inputTextView.setText(inputText);
-                isDotAlreadyInNumber = true;
-            }
+    }
 
+    public void setDotButton() {
+        Log.d(TAG, "button Dot is clicked, isDotAlreadyInNumber is: " + isDotAlreadyInNumber);
+        if (!isDotAlreadyInNumber) {
+            inputText = inputText + ".";
+            inputTextView.setText(inputText);
+            isDotAlreadyInNumber = true;
+        }
+
+        return;
+    }
+
+    public void setEqualButton() {
+        char c = inputText.charAt(inputText.length() - 1);
+        if (c > '9' || c < '0') {
+            Log.d(TAG, "cannot add input: not a number");
             return;
-        });
+        }
+        inputText = inputText.replace('x', '*');
 
-        buttonEqual.setOnClickListener(v -> {
-            char c = inputText.charAt(inputText.length() - 1);
-            if (c > '9' || c < '0') {
-                Log.d(TAG, "cannot add input: not a number");
-                return;
-            }
-            inputText = inputText.replace('x', '*');
+        result = Calculate.evaluate(inputText);
+        answerTextView.setText(String.valueOf(result));
 
-            result = Calculate.evaluate(inputText);
-            answerTextView.setText(String.valueOf(result));
+        inputText = inputText.replace('*', 'x');
+        History.getInstance().addEntry(new HistoryEntry(inputText, result));
+        isExpressionCalculated = true;
+        isHistoryDisabled = false;
 
-            inputText = inputText.replace('*', 'x');
-            History.getInstance().addEntry(new HistoryEntry(inputText, result));
-            isExpressionCalculated = true;
+        int entryNumber = History.getInstance().getHistoryEntryList().size();
+        editor.putString("NUMBER_OF_INDEX", String.valueOf(entryNumber));
 
-            int entryNumber = History.getInstance().getHistoryEntryList().size();
-            editor.putString("NUMBER_OF_INDEX", String.valueOf(entryNumber));
+        for (int i = 1; i <= entryNumber; i++) {
+            String inputKey = History.getInstance().getHistoryEntryList().get(i - 1).getHistoryInput();
+            String answerKey = String.valueOf(History.getInstance().getHistoryEntryList().get(i - 1).getHistoryAnswer());
 
-            for (int i = 1; i <= entryNumber; i++){
-                String inputKey = History.getInstance().getHistoryEntryList().get(i - 1).getHistoryInput() ;
-                String answerKey = String.valueOf(History.getInstance().getHistoryEntryList().get(i - 1).getHistoryAnswer());
+            editor.putString("INPUT" + String.valueOf(i), inputKey);
+            editor.putString("ANSWER" + String.valueOf(i), answerKey);
+            editor.commit();
+        }
+    }
 
-                editor.putString("INPUT" + String.valueOf(i), inputKey);
-                editor.putString("ANSWER" + String.valueOf(i), answerKey);
-                editor.commit();
-            }
+    public void setHistoryButton() {
+        HistoryDialog historyDialog = new HistoryDialog(getApplicationContext(), answerCallBack, clearCallback);
+        historyDialog.show(fragmentManager, "history");
+    }
 
+    public void disableHistoryButton(View v) {
+        ((Button) v).setEnabled(false);
+    }
 
-        });
-
-        buttonHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                HistoryDialog historyDialog = new HistoryDialog(getApplicationContext(), answerCallBack, clearCallback);
-
-                historyDialog.show(fragmentManager, "history");
-            }
-        });
-
-        buttonDelete.setOnClickListener(v -> {
-            if (!isExpressionCalculated) {
-                if (!inputText.isEmpty()) {
-                    // delete the dot
-                    if (inputText.charAt(inputText.length() - 1) == '.') {
-                        isDotAlreadyInNumber = false;
-                    }
-                    inputText = inputText.substring(0, inputText.length() - 1);
-                    inputTextView.setText(inputText);
+    public void setDeleteButton() {
+        if (!isExpressionCalculated) {
+            if (!inputText.isEmpty()) {
+                // delete the dot
+                if (inputText.charAt(inputText.length() - 1) == '.') {
+                    isDotAlreadyInNumber = false;
                 }
-            } else {
-                inputTextView.setText("");
-                answerTextView.setText("");
-                isExpressionCalculated = false;
-                inputText = "";
+                inputText = inputText.substring(0, inputText.length() - 1);
+                inputTextView.setText(inputText);
             }
-        });
+        } else {
+            inputTextView.setText("");
+            answerTextView.setText("");
+            isExpressionCalculated = false;
+            inputText = "";
+        }
     }
 
     // return the answer to inputText when click the entry in history dialog
     HistoryDialog.IHistoryEntryClicked answerCallBack = new HistoryDialog.IHistoryEntryClicked() {
         @Override
         public void OnItemClicked(int position) {
-            if (!History.getInstance().getHistoryEntryList().isEmpty()) {
-
+            char c = inputText.charAt(inputText.length() - 1);
+            if (c == 'x' || c == '/' || c == '+' || c == '-'){
+                inputText += String
+                        .valueOf(History.getInstance().getHistoryEntryList().get(position).getHistoryAnswer());
+            } else {
                 inputText = String
                         .valueOf(History.getInstance().getHistoryEntryList().get(position).getHistoryAnswer());
-
-                Log.d(TAG, "historydialog passvalue to main" + inputText);
-                inputTextView.setText(inputText);
-                isExpressionCalculated = false;
             }
+
+            inputTextView.setText(inputText);
+            isExpressionCalculated = false;
+
         }
     };
 
@@ -215,9 +239,10 @@ public class MainActivity extends AppCompatActivity {
     HistoryDialog.IClearClicked clearCallback = new HistoryDialog.IClearClicked() {
         @Override
         public void OnItemClicked(boolean isPressed) {
-            if (isPressed){
+            if (isPressed) {
                 editor.clear();
                 editor.commit();
+                isHistoryDisabled = true;
             }
         }
     };
